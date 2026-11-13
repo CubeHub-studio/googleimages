@@ -22,6 +22,7 @@ def main():
         key=lambda p: p.name.lower()
     )
     expected = set()
+    gallery_items = []
     urlset = ET.Element("urlset", {
         "xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
     })
@@ -72,6 +73,12 @@ def main():
 </html>
 """
         (PAGE_DIR / page_name).write_text(page, encoding="utf-8")
+        page_href = escape("image-pages/" + quote(page_name, safe=""), quote=True)
+        image_src = escape("images/" + slug, quote=True)
+        gallery_items.append(
+            f'<figure><a href="{page_href}"><img src="{image_src}" alt="{title_html}" loading="lazy" decoding="async"></a>'
+            f'<figcaption>{title_html}</figcaption></figure>'
+        )
         entry = ET.SubElement(urlset, "url")
         ET.SubElement(entry, "loc").text = page_url
         image_entry = ET.SubElement(entry, "{http://www.google.com/schemas/sitemap-image/1.1}image")
@@ -81,6 +88,20 @@ def main():
     for old_page in PAGE_DIR.glob("*.html"):
         if old_page.name not in expected:
             old_page.unlink()
+
+    # Render image cards into the homepage as real HTML, not client-side API results.
+    homepage_path = ROOT / "index.html"
+    homepage_html = homepage_path.read_text(encoding="utf-8")
+    start_marker = "<!-- GENERATED_GALLERY_START -->"
+    end_marker = "<!-- GENERATED_GALLERY_END -->"
+    if homepage_html.count(start_marker) != 1 or homepage_html.count(end_marker) != 1:
+        raise RuntimeError("index.html must contain exactly one generated gallery marker pair")
+    start = homepage_html.index(start_marker) + len(start_marker)
+    end = homepage_html.index(end_marker)
+    if end < start:
+        raise RuntimeError("Generated gallery markers are out of order")
+    gallery_html = "\\n" + "\\n".join(gallery_items) + "\\n" if gallery_items else "\\n<p>No images have been published yet.</p>\\n"
+    homepage_path.write_text(homepage_html[:start] + gallery_html + homepage_html[end:], encoding="utf-8")
 
     ET.indent(urlset, space="  ")
     ET.ElementTree(urlset).write(ROOT / "sitemap.xml", encoding="utf-8", xml_declaration=True)

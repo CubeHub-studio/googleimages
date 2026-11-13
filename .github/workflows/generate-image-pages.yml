@@ -12,14 +12,22 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: generate-image-pages
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Validate generator
+        run: python3 -m py_compile scripts/generate_image_pages.py
       - name: Generate image pages and sitemap
-        run: python3 scripts/generate_image_pages.py
+        run: |
+          python3 scripts/generate_image_pages.py
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('sitemap.xml')"
       - name: Commit generated files
         run: |
           if [[ -n "$(git status --porcelain index.html image-pages sitemap.xml)" ]]; then

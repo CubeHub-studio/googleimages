@@ -32,7 +32,7 @@ def main():
         filename = image.name
         slug = quote(filename, safe="")
         image_url = f"{SITE}/images/{slug}"
-        page_name = image.stem + ".html"
+        # Include the original extension to prevent collisions such as photo.jpg and photo.png.\n        page_name = image.name + ".html"
         expected.add(page_name)
         page_url = f"{SITE}/image-pages/{quote(page_name, safe='')}"
         title = humanize(filename)

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Gallery | Cubes, Studio</title>
+  <meta name="description" content="A public gallery of images shared by Cubes, Studio.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://cube-hub-studio.github.io/googleimages/">
+  <link rel="sitemap" type="application/xml" href="sitemap.xml">
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#11111b;color:#f4f1ff}
+    *{box-sizing:border-box}body{margin:0}header{padding:3rem 1.25rem 2rem;text-align:center;background:linear-gradient(135deg,#211b43,#38236a)}
+    h1{margin:0 0 .5rem;font-size:clamp(2rem,6vw,3.4rem)}header p{margin:.3rem auto;max-width:42rem;color:#ded6ff}
+    main{max-width:1100px;margin:auto;padding:2rem 1rem}#status{color:#c8c0e8;text-align:center}
+    #gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:1rem}
+    figure{margin:0;background:#201d2c;border:1px solid #39334c;border-radius:14px;overflow:hidden}
+    figure a{display:block}figure img{display:block;width:100%;height:230px;object-fit:contain;background:#090910}
+    figcaption{padding:.8rem 1rem;overflow-wrap:anywhere}a{color:#c8b5ff}
+    footer{text-align:center;padding:2rem;color:#aaa2c4;font-size:.9rem}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Image Gallery</h1>
+  <p>Public images shared by Cubes, Studio.</p>
+</header>
+<main>
+  <p id="status">Loading images…</p>
+  <section id="gallery" aria-label="Published images"></section>
+</main>
+<footer>Images are hosted publicly. Please only upload images you have permission to share.</footer>
+<script>
+(async()=>{
+  const status=document.querySelector("#status"), gallery=document.querySelector("#gallery");
+  try{
+    const response=await fetch("https://api.github.com/repos/CubeHub-studio/googleimages/contents/images");
+    if(response.status===404){status.textContent="No images yet. Add image files to the images/ folder in the GitHub repository.";return}
+    if(!response.ok)throw new Error("GitHub returned "+response.status);
+    const files=await response.json();
+    const images=files.filter(f=>f.type==="file" && /\.(avif|gif|jpe?g|png|webp)$/i.test(f.name));
+    if(!images.length){status.textContent="No images yet. Add JPG, PNG, GIF, WebP, or AVIF files to images/.";return}
+    status.textContent="";
+    for(const file of images){
+      const title=file.name.replace(/\.[^.]+$/,"").replace(/[-_]+/g," ").trim();
+      const figure=document.createElement("figure"), link=document.createElement("a"), img=document.createElement("img"), caption=document.createElement("figcaption");
+      link.href=file.download_url;link.target="_blank";link.rel="noopener";
+      img.src=file.download_url;img.alt=title;img.loading="lazy";img.decoding="async";
+      caption.textContent=title||file.name;link.append(img);figure.append(link,caption);gallery.append(figure);
+    }
+  }catch(error){status.textContent="Couldn't load the gallery right now. Images may still be available in the repository's images/ folder."}
+})();
+</script>
+</body>
+</html>

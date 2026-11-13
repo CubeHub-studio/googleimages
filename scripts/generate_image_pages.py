@@ -24,7 +24,6 @@ def main():
     expected = set()
     urlset = ET.Element("urlset", {
         "xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9",
-        "xmlns:image": "http://www.google.com/schemas/sitemap-image/1.1",
     })
     homepage = ET.SubElement(urlset, "url")
     ET.SubElement(homepage, "loc").text = SITE + "/"

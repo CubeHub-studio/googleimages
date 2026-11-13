@@ -100,7 +100,7 @@ def main():
     end = homepage_html.index(end_marker)
     if end < start:
         raise RuntimeError("Generated gallery markers are out of order")
-    gallery_html = "\\n" + "\\n".join(gallery_items) + "\\n" if gallery_items else "\\n<p>No images have been published yet.</p>\\n"
+    gallery_html = "\n" + "\n".join(gallery_items) + "\n" if gallery_items else "\n<p>No images have been published yet.</p>\n"
     homepage_path.write_text(homepage_html[:start] + gallery_html + homepage_html[end:], encoding="utf-8")
 
     ET.indent(urlset, space="  ")

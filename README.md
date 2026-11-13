@@ -33,3 +33,4 @@ Google decides when and whether pages and images appear in search. Indexing is n
 ## Privacy and permissions
 
 Only upload images you own or have permission to publish. Public repository files and the Pages site are visible to everyone. Avoid uploading private or identifying information.
+The generated homepage cards, per-image pages, and sitemap are committed by the workflow. After an image upload, wait for both the generator workflow and the GitHub Pages deployment to finish before checking the live site.

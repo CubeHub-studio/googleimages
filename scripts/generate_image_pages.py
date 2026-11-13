@@ -75,7 +75,6 @@ def main():
         ET.SubElement(entry, "loc").text = page_url
         image_entry = ET.SubElement(entry, "{http://www.google.com/schemas/sitemap-image/1.1}image")
         ET.SubElement(image_entry, "{http://www.google.com/schemas/sitemap-image/1.1}loc").text = image_url
-        ET.SubElement(image_entry, "{http://www.google.com/schemas/sitemap-image/1.1}title").text = title
 
     # Remove generated pages for images that have since been deleted or renamed.
     for old_page in PAGE_DIR.glob("*.html"):

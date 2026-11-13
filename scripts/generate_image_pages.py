@@ -15,6 +15,7 @@ def humanize(filename):
     return Path(filename).stem.replace("-", " ").replace("_", " ").strip() or filename
 
 def main():
+    ET.register_namespace("image", "http://www.google.com/schemas/sitemap-image/1.1")
     PAGE_DIR.mkdir(exist_ok=True)
     images = sorted(
         (p for p in IMAGE_DIR.iterdir() if p.is_file() and p.suffix.lower() in EXTENSIONS),

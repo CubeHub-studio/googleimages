@@ -1,33 +1,38 @@
-name: Generate image SEO pages
+name: Generate and deploy image gallery
 
 on:
   push:
     branches: [main]
-    paths:
-      - "images/**"
-      - "scripts/generate_image_pages.py"
-      - ".github/workflows/generate-image-pages.yml"
   workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
-  group: generate-image-pages
+  group: github-pages
   cancel-in-progress: false
 
 jobs:
-  generate:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
       - name: Validate generator
         run: python3 -m py_compile scripts/generate_image_pages.py
+
       - name: Generate image pages and sitemap
         run: |
           python3 scripts/generate_image_pages.py
           python3 -c "import xml.etree.ElementTree as ET; ET.parse('sitemap.xml')"
+
       - name: Commit generated files
         run: |
           if [[ -n "$(git status --porcelain index.html image-pages sitemap.xml)" ]]; then
@@ -39,3 +44,15 @@ jobs:
           else
             echo "Generated SEO files are already up to date."
           fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

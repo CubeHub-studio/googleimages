@@ -17,13 +17,13 @@ In **Settings → Pages**, choose **Deploy from a branch**, select `main` and `/
 
 The site address will be:
 
-https://cube-hub-studio.github.io/googleimages/
+https://cubehub-studio.github.io/googleimages/
 
 ## Google indexing
 
 - Keep the repository and Pages site public.
 - After Pages is live, add the site to [Google Search Console](https://search.google.com/search-console/).
-- Verify ownership and submit `https://cube-hub-studio.github.io/googleimages/sitemap.xml`.
+- Verify ownership and submit `https://cubehub-studio.github.io/googleimages/sitemap.xml`.
 - Request indexing for the homepage.
 
 Google controls when and whether pages and images appear in search. Indexing is not guaranteed and may take time. The gallery's image list is loaded from GitHub in the browser; for stronger per-image search visibility, create a dedicated HTML page with a descriptive title and an ordinary `<img>` element for each important image, and add those pages and image URLs to the sitemap.
